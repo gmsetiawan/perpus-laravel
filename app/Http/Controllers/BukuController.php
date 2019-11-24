@@ -186,6 +186,8 @@ class BukuController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
+    
+    /**
     public function update(Request $request, $id)
     {
         if($request->file('cover')) {
@@ -211,6 +213,42 @@ class BukuController extends Controller
                 'cover' => $cover
                 ]);
 
+        alert()->success('Berhasil.','Data telah diubah!');
+        return redirect()->route('buku.index');
+    }
+    */
+    
+    /**
+     * Update the specified resource in storage. Updated
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function update(Request $request, $id)
+    {
+        
+        $buku = Buku::find($id);
+        $buku->judul = $request->judul;
+        $buku->isbn = $request->isbn;
+        $buku->pengarang = $request->pengarang;
+        $buku->penerbit = $request->penerbit;
+        $buku->tahun_terbit = $request->tahun_terbit;
+        $buku->jumlah_buku = $request->jumlah_buku;
+        $buku->deskripsi = $request->deskripsi;
+        $buku->lokasi = $request->lokasi;
+        
+
+        if($request->hasfile('cover')) {
+            $file = $request->file('cover');
+            $dt = Carbon::now();
+            $acak  = $file->getClientOriginalExtension();
+            $fileName = rand(11111,99999).'-'.$dt->format('Y-m-d-H-i-s').'.'.$acak; 
+            $request->file('cover')->move("images/buku", $fileName);
+            $buku->cover = $fileName;
+        } 
+
+        $buku->save();
         alert()->success('Berhasil.','Data telah diubah!');
         return redirect()->route('buku.index');
     }
